@@ -1,7 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-// Funzione per generare lo slug basato sul titolo
 const generateSlug = (title) => {
   return title
     .toLowerCase()
@@ -28,4 +27,41 @@ const store = async (req, res) => {
   }
 };
 
-module.exports = { store };
+const index = async (req, res) => {
+  try {
+    const { published } = req.query;
+    const where = {};
+
+    if (published === "true") {
+      where.published = true;
+    } else if (published === "false") {
+      where.published = false;
+    }
+
+    const posts = await prisma.post.findMany({ where });
+
+    res.json({ data: posts });
+  } catch (error) {
+    console.error("Qualcosa è andato storto", error);
+    res.status(500).send("Errore durante il recupero dei post");
+  }
+};
+
+const show = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const post = await prisma.post.findUnique({
+      where: { slug },
+    });
+    if (post) {
+      res.json(post);
+    } else {
+      res.status(404).send(`Post con lo slug ${slug} non trovato.`);
+    }
+  } catch (err) {
+    console.error("Qualcosa è andato storto", err);
+    res.status(500).send("Errore durante il recupero del post");
+  }
+};
+
+module.exports = { store, index, show };

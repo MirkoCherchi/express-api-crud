@@ -14,31 +14,31 @@ datasource db {
 }
 
 model Post {
-  id         Int      @id @default(autoincrement())
-  title      String
-  slug       String   @unique
-  img        String?
-  content    String
-  published  Boolean
-  categoryId Int
-  category   Category @relation(fields: [categoryId], references: [id])
-  tags       Tag[]
-  createAt   DateTime @default(now())
-  updateAt   DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  title     String
+  slug      String   @unique
+  img       String?
+  content   String
+  published Boolean
+  // categoryId Int
+  // category   Category @relation(fields: [categoryId], references: [id])
+  // tags       Tag[]
+  createAt  DateTime @default(now())
+  updateAt  DateTime @updatedAt
 }
 
-model Category {
-  id       Int      @id @default(autoincrement())
-  name     String
-  posts    Post[]
-  createAt DateTime @default(now())
-  updateAt DateTime @updatedAt
-}
+// model Category {
+//   id       Int      @id @default(autoincrement())
+//   name     String
+//   posts    Post[]
+//   createAt DateTime @default(now())
+//   updateAt DateTime @updatedAt
+// }
 
-model Tag {
-  id       Int      @id @default(autoincrement())
-  name     String
-  posts    Post[]
-  createAt DateTime @default(now())
-  updateAt DateTime @updatedAt
-}
+// model Tag {
+//   id       Int      @id @default(autoincrement())
+//   name     String
+//   posts    Post[]
+//   createAt DateTime @default(now())
+//   updateAt DateTime @updatedAt
+// }

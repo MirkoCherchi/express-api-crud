@@ -67,16 +67,25 @@ const show = async (req, res) => {
 const update = async (req, res) => {
   try {
     const { slug } = req.params;
-    const post = await prisma.post.update({
+    const postData = req.body;
+
+    if (postData.title) {
+      const newSlug = generateSlug(postData.title);
+      postData.slug = newSlug;
+    }
+    const updatedPost = await prisma.post.update({
       where: { slug },
-      data: req.body,
+      data: postData,
     });
-    res.json(post);
+
+    res.json(updatedPost);
   } catch (err) {
     console.error("Qualcosa è andato storto", err);
     res.status(500).send("Errore durante la modifica del post");
   }
 };
+
+module.exports = { update };
 
 const destroy = async (req, res) => {
   const { slug } = req.params;

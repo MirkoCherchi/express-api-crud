@@ -38,9 +38,30 @@ const index = async (req, res) => {
       where.published = false;
     }
 
-    const posts = await prisma.post.findMany({ where });
+    const { page = 1, limit = 5 } = req.query;
 
-    res.json({ data: posts });
+    const offset = (page - 1) * limit;
+
+    const totalItems = await prisma.post.count({ where });
+
+    const totalPages = Math.ceil(totalItems / limit);
+
+    if (page > totalPages) {
+      throw new Error("La pagina richiesta non esiste.");
+    }
+
+    const posts = await prisma.post.findMany({
+      where,
+      take: parseInt(limit),
+      skip: parseInt(offset),
+    });
+
+    res.json({
+      data: posts,
+      page: parseInt(page),
+      totalItems,
+      totalPages,
+    });
   } catch (error) {
     console.error("Qualcosa è andato storto", error);
     res.status(500).send("Errore durante il recupero dei post");
